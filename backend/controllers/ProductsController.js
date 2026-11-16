@@ -1,15 +1,20 @@
 import Product from "../models/Product.js";
 
 export const createProduct = async (req, res) => {
+    console.log("BODY:", req.body, "FILE:", req.file);
     try{
-        const { name, price, category, image } = req.body;
-        if(!name || !price || !category || !image){
+        const { name, price, category } = req.body;
+        if(!name || !price || !category || !req.file){
             return res.status(400).json({ message: "All fields are required" });
         }
         if(isNaN(price) || price < 0){
             return res.status(400).json({ message: "Price must be a positive number" });
         }
-        const product = await Product.create({ name, price, category, image });
+        if(!req.file){
+            return res.status(400).json({ message: "Image file is required" });
+        }
+
+        const product = await Product.create({ name, price, category,image: `/uploads/${req.file.filename}` });
         res.status(201).json(product);
     
     } catch (error) {

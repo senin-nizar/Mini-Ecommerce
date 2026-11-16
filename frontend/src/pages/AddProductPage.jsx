@@ -1,20 +1,35 @@
-import {useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {useFormik} from "formik";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import {useProducts} from "../context/ProductsContext";
+import { useProducts } from "../context/ProductsContext";
 
 const CATEGORIES = ["Electronics", "Clothing", "Books", "Home"];
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Product name is required"),
-  price: Yup.number().required("Price is required").positive("Price must be positive").typeError("Price must be a number").min(0, "Price must be greater than 0"),
-  category: Yup.string().oneOf(CATEGORIES, "Invalid category").required("Category is required"),
-  image: Yup.string().url("Invalid URL").required("Image URL is required"),
+  price: Yup.number()
+    .required("Price is required")
+    .positive("Price must be positive")
+    .typeError("Price must be a number")
+    .min(0, "Price must be greater than 0"),
+  category: Yup.string()
+    .oneOf(CATEGORIES, "Invalid category")
+    .required("Category is required"),
+  image: Yup.mixed()
+    .required("Image is required")
+    .test("fileType", "Only JPG, PNG or WEBP allowed", (file) =>
+      file
+        ? ["image/jpeg", "image/png", "image/webp"].includes(file.type)
+        : false,
+    )
+    .test("fileSize", "Image must be under 2MB", (file) =>
+      file ? file.size <= 2 * 1024 * 1024 : false,
+    ),
 });
 
 function AddProductPage() {
-  const {addProduct} = useProducts();
+  const { addProduct } = useProducts();
   const navigate = useNavigate();
 
   const [serverError, setServerError] = useState(null);
@@ -23,27 +38,32 @@ function AddProductPage() {
       name: "",
       price: "",
       category: "",
-      image: "",
+      image: null,
     },
     validationSchema,
     onSubmit: async (values) => {
-      setServerError(null);
+      setServerError("");
       try {
-        await addProduct(values);
+        const formData = new FormData();
+        formData.append("name", values.name);
+        formData.append("price", values.price);
+        formData.append("category", values.category);
+        formData.append("image", values.image);
+
+        await addProduct(formData);
         navigate("/products");
+      } catch (err) {
+        setServerError(err.message);
       }
-      catch (error) {
-        setServerError(error.message || "An error occurred while adding the product");
-      }
-    }
+    },
   });
 
-  const inputClass = "border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500";
+  const inputClass =
+    "border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500";
   return (
-     <div className="mx-auto max-w-md p-6">
+    <div className="mx-auto max-w-md p-6">
       <h1 className="mb-6 text-2xl font-bold">Add Product</h1>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-        
         <div className="flex flex-col gap-1">
           <input
             type="text"
@@ -54,7 +74,7 @@ function AddProductPage() {
             onBlur={formik.handleBlur}
             className={inputClass}
           />
-        
+
           {formik.touched.name && formik.errors.name && (
             <p className="text-sm text-red-600">{formik.errors.name}</p>
           )}
@@ -97,11 +117,12 @@ function AddProductPage() {
 
         <div className="flex flex-col gap-1">
           <input
-            type="text"
+            type="file"
             name="image"
-            placeholder="Image URL (optional)"
-            value={formik.values.image}
-            onChange={formik.handleChange}
+            accept="image/png, image/jpeg, image/webp"
+            onChange={(e) =>
+              formik.setFieldValue("image", e.currentTarget.files[0])
+            }
             onBlur={formik.handleBlur}
             className={inputClass}
           />
