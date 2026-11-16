@@ -1,8 +1,15 @@
+import { useEffect } from "react";
 import {useProducts} from "../context/ProductsContext.jsx";
 
 function ProductsPage() {
     const data = useProducts();
     console.log(data);
+    
+    const { products,  fetchProducts } = useProducts();
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+    console.log(products);
     
 
   return (

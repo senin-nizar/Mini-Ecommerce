@@ -5,13 +5,40 @@ export function ProductsProvider ({ children }){
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-``
+    const API_URL = "http://localhost:5000/products";
+    
     const fetchProducts = async () => {
-        console.log('fetcHProducts called');   
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await fetch(API_URL)
+            if (!response.ok) {
+                throw new Error("Failed to fetch products");
+            }
+            const data = await response.json();
+            setProducts(data);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+
     };
 
-    const addProduct = async (product) => {
-        console.log('addProduct called', product);
+    const addProduct = async (productData) => {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(productData),
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to add product");
+        }
+        await fetchProducts(); //auto  refresh page after adding new product
+
     }
 
   return (
