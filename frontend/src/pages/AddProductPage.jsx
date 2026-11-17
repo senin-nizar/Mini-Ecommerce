@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useProducts } from "../context/ProductsContext";
-
-const CATEGORIES = ["Electronics", "Clothing", "Books", "Home"];
+import { CATEGORIES } from "../constants/categories";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Product name is required"),
