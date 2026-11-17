@@ -53,8 +53,16 @@ function ProductsPage() {
   }
 
   const totalPages = Math.ceil(visibleProducts.length / PRODUCTS_PER_PAGE);
-  const start = (page - 1) * PRODUCTS_PER_PAGE; // Calculate the starting index for the current page, starts from 0 next page 8
-  const pageProducts = visibleProducts.slice(start, start + PRODUCTS_PER_PAGE); // Get the products for the current page
+  const start = (page - 1) * PRODUCTS_PER_PAGE; // starting index for the current page: 0, then 8, then 16...
+  const pageProducts = visibleProducts.slice(start, start + PRODUCTS_PER_PAGE); // products for the current page
+
+  // Put every control back to its starting value
+  const handleReset = () => {
+    setSearch("");
+    setCategory("");
+    setSort("");
+    setPage(1);
+  };
 
   return (
     <div className="p-6">
@@ -69,83 +77,102 @@ function ProductsPage() {
           + Add Product
         </Link>
       </div>
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row">
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => {
-            setPage(1);
-            setSearch(e.target.value);
-          }}
-          className="flex-1 rounded border border-gray-300 p-2"
-        />
 
-        <select
-          value={category}
-          onChange={(e) => {
-            setPage(1);
-            setCategory(e.target.value);
-          }}
-          className="rounded border border-gray-300 p-2"
-        >
-          <option value="">All categories</option>
-          {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+      
+      <div className="flex flex-col gap-6 md:flex-row">
+        <aside className="w-full shrink-0 self-start rounded-lg border bg-white p-4 md:w-64">
+          <h2 className="mb-4 text-lg font-semibold">Filters & Sorting</h2>
 
-        <select
-          value={sort}
-          onChange={(e) => {
-            setPage(1);
-            setSort(e.target.value);
-          }}
-          className="rounded border border-gray-300 p-2"
-        >
-          <option value="">Sort by</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="name-asc">Name: A to Z</option>
-        </select>
-      </div>
-      {pageProducts.length === 0 ? (
-        <p className="text-gray-600">No products match your search</p>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {pageProducts.map((product) => (
-              <ProductCard key={product._id} product={product} />
+          <label className="mb-1 block text-sm font-medium">Category</label>
+          <select
+            value={category}
+            onChange={(e) => {
+              setPage(1);
+              setCategory(e.target.value);
+            }}
+            className="mb-4 w-full rounded border border-gray-300 p-2"
+          >
+            <option value="">All categories</option>
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
             ))}
-          </div>
+          </select>
 
-          {totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-4">
-              <button
-                onClick={() => setPage(page - 1)}
-                disabled={page === 1}
-                className="rounded border px-4 py-2 disabled:opacity-40"
-              >
-                Previous
-              </button>
+          <label className="mb-1 block text-sm font-medium">Sort</label>
+          <select
+            value={sort}
+            onChange={(e) => {
+              setPage(1);
+              setSort(e.target.value);
+            }}
+            className="mb-4 w-full rounded border border-gray-300 p-2"
+          >
+            <option value="">Relevant</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name-asc">Name: A to Z</option>
+          </select>
 
-              <span>
-                Page {page} of {totalPages}
-              </span>
+          <button
+            onClick={handleReset}
+            className="w-full rounded bg-yellow-500 py-2 font-semibold hover:bg-yellow-600"
+          >
+            Reset
+          </button>
+        </aside>
 
-              <button
-                onClick={() => setPage(page + 1)}
-                disabled={page === totalPages}
-                className="rounded border px-4 py-2 disabled:opacity-40"
-              >
-                Next
-              </button>
-            </div>
+        {/* RIGHT: search, then the grid and the page buttons */}
+        <div className="flex-1">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => {
+              setPage(1);
+              setSearch(e.target.value);
+            }}
+            className="mb-6 w-full rounded border border-gray-300 p-2"
+          />
+
+          {visibleProducts.length === 0 ? (
+            <p className="text-gray-600">No products match your search</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+                {pageProducts.map((product) => (
+                  <ProductCard key={product._id} product={product} />
+                ))}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="mt-8 flex items-center justify-center gap-4">
+                  <button
+                    onClick={() => setPage(page - 1)}
+                    disabled={page === 1}
+                    className="rounded border px-4 py-2 disabled:opacity-40"
+                  >
+                    Previous
+                  </button>
+
+                  <span>
+                    Page {page} of {totalPages}
+                  </span>
+
+                  <button
+                    onClick={() => setPage(page + 1)}
+                    disabled={page === totalPages}
+                    className="rounded border px-4 py-2 disabled:opacity-40"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 }
