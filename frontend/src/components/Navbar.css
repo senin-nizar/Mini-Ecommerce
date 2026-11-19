@@ -1,0 +1,125 @@
+
+/* ==========================================
+   NEO-BRUTALIST NAVBAR
+========================================== */
+
+nav.flex.items-center.justify-between.bg-gray-900 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: calc(100% - 70px);
+  max-width: 1450px;
+
+  margin: 35px auto 0;
+  padding: 20px 30px !important;
+
+  background: #ffffff !important;
+  color: #000000 !important;
+
+  border: 3px solid #000000;
+  border-radius: 0 !important;
+
+  box-shadow: 7px 7px 0 #000000;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Brand name */
+nav.flex.items-center.justify-between .logo-link {
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  color: #000000 !important;
+  text-decoration: none;
+}
+
+/* Disable the general link hover effect */
+nav.flex.items-center.justify-between .logo-link:hover {
+  background: transparent !important;
+  color: #000000 !important;
+  transform: none;
+  box-shadow: none !important;
+}
+nav.flex.items-center.justify-between h1 {
+  margin: 0;
+  text-transform: none;
+  color: #000000;
+  font-size: 24px;
+  font-weight: 900;
+
+  letter-spacing: -1px;
+}
+
+/* Navigation links container */
+
+nav.flex.items-center.justify-between .flex.gap-6 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Navigation links */
+
+nav.flex.items-center.justify-between a {
+  display: inline-block;
+
+  padding: 11px 18px;
+
+  background: #ffffff;
+  color: #000000 !important;
+
+  border: 2px solid #000000;
+  border-radius: 0 !important;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  box-shadow: 3px 3px 0 #000000;
+
+  transition: all 0.15s ease;
+}
+
+/* Hover effect */
+
+nav.flex.items-center.justify-between a:hover {
+  background: #000000 !important;
+  color: #ffffff !important;
+
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 #000000;
+}
+
+/* Responsive */
+
+@media (max-width: 550px) {
+  nav.flex.items-center.justify-between.bg-gray-900 {
+    width: calc(100% - 30px);
+    margin-top: 18px;
+    padding: 15px !important;
+
+    gap: 12px;
+    flex-wrap: wrap;
+
+    box-shadow: 4px 4px 0 #000000;
+  }
+
+  nav.flex.items-center.justify-between h1 {
+    font-size: 19px;
+  }
+
+  nav.flex.items-center.justify-between .flex.gap-6 {
+    gap: 8px;
+  }
+
+  nav.flex.items-center.justify-between a {
+    padding: 9px 11px;
+    font-size: 10px;
+  }
+}

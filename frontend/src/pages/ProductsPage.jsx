@@ -3,6 +3,8 @@ import { useProducts } from "../context/ProductsContext.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import { Link } from "react-router-dom";
 import { CATEGORIES } from "../constants/categories.js";
+import "./ProductPage.css";
+
 
 const PRODUCTS_PER_PAGE = 8;
 
@@ -14,11 +16,11 @@ function ProductsPage() {
 
   const { products, fetchProducts, loading, error } = useProducts();
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(); //mounting time
   }, []);
 
   if (loading) {
-    return <p className="text-center text-gray-500 p-6">Loading products...</p>;
+    return <p className="text-center text-gray-500 p-6 loadinn">Loading products...</p>;
   }
 
   if (error) {
@@ -53,10 +55,9 @@ function ProductsPage() {
   }
 
   const totalPages = Math.ceil(visibleProducts.length / PRODUCTS_PER_PAGE);
-  const start = (page - 1) * PRODUCTS_PER_PAGE; // starting index for the current page: 0, then 8, then 16...
+  const start = (page - 1) * PRODUCTS_PER_PAGE; // starting index for the current page: 0, then 8..
   const pageProducts = visibleProducts.slice(start, start + PRODUCTS_PER_PAGE); // products for the current page
 
-  // Put every control back to its starting value
   const handleReset = () => {
     setSearch("");
     setCategory("");
@@ -65,8 +66,9 @@ function ProductsPage() {
   };
 
   return (
-    <div className="p-6">
-      <p>{products.length} products available.</p>
+    <div className="p-6 products-page">
+      
+      <p><span className="green-dot">.</span>{products.length} products available.</p>
 
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Products</h1>
@@ -109,7 +111,7 @@ function ProductsPage() {
             }}
             className="mb-4 w-full rounded border border-gray-300 p-2"
           >
-            <option value="">Relevant</option>
+            <option value="">Relevance</option>
             <option value="price-asc">Price: Low to High</option>
             <option value="price-desc">Price: High to Low</option>
             <option value="name-asc">Name: A to Z</option>
@@ -123,7 +125,6 @@ function ProductsPage() {
           </button>
         </aside>
 
-        {/* RIGHT: search, then the grid and the page buttons */}
         <div className="flex-1">
           <input
             type="text"

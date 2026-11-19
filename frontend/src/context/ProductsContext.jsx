@@ -27,13 +27,13 @@ export function ProductsProvider({ children }) {
   const addProduct = async (formData) => {
     const response = await fetch(API_URL, {
       method: "POST",
-      body: formData, // a FormData object: no headers, no JSON.stringify
+      body: formData,
     });
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || "Failed to add product");
     }
-    await fetchProducts(); // auto refresh after adding a new product
+    await fetchProducts(); // like an auto refresh after adding a new product
   };
 
   return (

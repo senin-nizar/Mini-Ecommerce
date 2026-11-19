@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useProducts } from "../context/ProductsContext";
 import { CATEGORIES } from "../constants/categories";
+import { toast } from "react-hot-toast";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Product name is required"),
@@ -28,6 +29,7 @@ const validationSchema = Yup.object({
 });
 
 function AddProductPage() {
+  const [preview, setPreview] = useState(null);
   const { addProduct } = useProducts();
   const navigate = useNavigate();
 
@@ -50,15 +52,29 @@ function AddProductPage() {
         formData.append("image", values.image);
 
         await addProduct(formData);
+        toast.success("Product added successfully!");
         navigate("/products");
       } catch (err) {
         setServerError(err.message);
+        toast.error("Failed to add product: " + err.message);
       }
     },
   });
 
   const inputClass =
     "border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500";
+
+  useEffect(() => {
+    const file = formik.values.image;
+    if (!file) {
+      setPreview(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [formik.values.image]);
+
   return (
     <div className="mx-auto max-w-md p-6">
       <h1 className="mb-6 text-2xl font-bold">Add Product</h1>
@@ -127,6 +143,13 @@ function AddProductPage() {
           />
           {formik.touched.image && formik.errors.image && (
             <p className="text-sm text-red-600">{formik.errors.image}</p>
+          )}
+          {preview && formik.values.image?.type.startsWith("image/") && (
+            <img
+              src={preview}
+              alt="Selected preview"
+              className="mt-2 h-40 w-40 rounded border object-cover"
+            />
           )}
         </div>
 
