@@ -1,8 +1,11 @@
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 function ProductCard({ product }) {
-  const imageSrc = product.image.startsWith("http")
+
+  const imageSrc = product.image?.startsWith("http")
     ? product.image
     : `${BASE_URL}${product.image}`;
+
   return (
     <div className="rounded-lg border bg-white p-4 shadow">
       {product.image ? (
